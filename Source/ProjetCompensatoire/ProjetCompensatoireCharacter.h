@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "AbilitySystemInterface.h"
 #include "ProjetCompensatoireCharacter.generated.h"
 
 class UInputComponent;
@@ -12,12 +13,13 @@ class USkeletalMeshComponent;
 class UCameraComponent;
 class UInputAction;
 class UInputMappingContext;
+
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class AProjetCompensatoireCharacter : public ACharacter
+class AProjetCompensatoireCharacter : public ACharacter , public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -55,6 +57,14 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	UPROPERTY (EditAnywhere , BlueprintReadOnly , Category = "GASComponent" , meta = (AllowPrivateAccess="true"))
+	class UAbilitySystemComponent* ASC;
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override
+	{
+		return ASC;
+	}
 
 protected:
 	// APawn interface
