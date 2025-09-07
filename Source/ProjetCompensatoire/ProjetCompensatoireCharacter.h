@@ -66,6 +66,9 @@ protected:
 		return ASC;
 	}
 
+	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category ="GASComponent", meta = (AllowPrivateAccess = "true"))
+	const class UMyAttributeSet* MyAttributeSet;
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;

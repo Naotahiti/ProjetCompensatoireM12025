@@ -11,6 +11,7 @@
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
 #include "AbilitySystemComponent.h"
+#include "MyAttributeSet.h" 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -43,6 +44,11 @@ void AProjetCompensatoireCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	if (IsValid(ASC))
+	{
+		MyAttributeSet = ASC->GetSet<UMyAttributeSet>();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
