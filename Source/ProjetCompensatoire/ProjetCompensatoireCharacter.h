@@ -38,6 +38,12 @@ class AProjetCompensatoireCharacter : public ACharacter , public IAbilitySystemI
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SpellAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* FireMappingContext;
 	
 public:
 	AProjetCompensatoireCharacter();
@@ -51,12 +57,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	void CastSpell();
 
 	UPROPERTY (EditAnywhere , BlueprintReadOnly , Category = "GASComponent" , meta = (AllowPrivateAccess="true"))
 	class UAbilitySystemComponent* ASC;
@@ -69,6 +79,12 @@ protected:
 	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category ="GASComponent", meta = (AllowPrivateAccess = "true"))
 	const class UMyAttributeSet* MyAttributeSet;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GASComponent", meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<class UGameplayAbility>> abilities;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
+	TSubclassOf<class UGameplayAbility> CurrentSpell;
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -79,6 +95,13 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+	void receivepower(TSubclassOf<class UGameplayAbility> power);// add power 
+
+	FVector VFXtarget; // so that VFX particles go towards a target
+
+	FVector spawnloc; // spawn location for VFX
+
 
 };
 

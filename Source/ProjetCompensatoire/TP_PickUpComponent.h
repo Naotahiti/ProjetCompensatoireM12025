@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/SphereComponent.h"
 #include "ProjetCompensatoireCharacter.h"
+#include "Abilities/GameplayAbility.h"
+#include "../ProjetCompensatoire/GAS/Powerbase.h"
 #include "TP_PickUpComponent.generated.h"
 
 // Declaration of the delegate that will be called when someone picks this up
@@ -21,6 +23,10 @@ public:
 	/** Delegate to whom anyone can subscribe to receive this event */
 	UPROPERTY(BlueprintAssignable, Category = "Interaction")
 	FOnPickUp OnPickUp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	TSubclassOf<UPowerbase> power;
+
 
 	UTP_PickUpComponent();
 protected:

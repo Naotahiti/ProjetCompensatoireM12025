@@ -11,6 +11,7 @@
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
 #include "AbilitySystemComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "MyAttributeSet.h" 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -38,6 +39,9 @@ AProjetCompensatoireCharacter::AProjetCompensatoireCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
+	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+
+
 }
 
 void AProjetCompensatoireCharacter::BeginPlay()
@@ -48,6 +52,7 @@ void AProjetCompensatoireCharacter::BeginPlay()
 	if (IsValid(ASC))
 	{
 		MyAttributeSet = ASC->GetSet<UMyAttributeSet>();
+		
 	}
 }
 
@@ -67,11 +72,22 @@ void AProjetCompensatoireCharacter::SetupPlayerInputComponent(UInputComponent* P
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AProjetCompensatoireCharacter::Look);
+
+		//spell casting
+		EnhancedInputComponent->BindAction(SpellAction, ETriggerEvent::Started, this, &AProjetCompensatoireCharacter::CastSpell);
 	}
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void AProjetCompensatoireCharacter::receivepower(TSubclassOf<UGameplayAbility> power)
+{
+	
+	abilities.Add(power);
+	ASC->GiveAbility(FGameplayAbilitySpec(power, 1, abilities.Num()-1));
+	ASC->InitAbilityActorInfo(this, this);
 }
 
 
@@ -99,4 +115,43 @@ void AProjetCompensatoireCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AProjetCompensatoireCharacter::CastSpell()
+{
+	FVector start = FirstPersonCameraComponent->GetComponentLocation();
+	FVector end = start+FirstPersonCameraComponent->GetForwardVector()*2000.;
+
+	FCollisionQueryParams Params;
+	FHitResult hit;
+	Params.AddIgnoredActor(this); // On ignore le joueur
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		hit,
+		start,
+		end,
+		ECC_Visibility,
+		Params
+	);
+
+	/*DrawDebugLine(GetWorld(), start, hit.Location, FColor::Red, false, 2.f, 0, 2.f);
+
+
+	DrawDebugPoint(GetWorld(), hit.Location, 10.f, FColor::Blue, false, 2.f);*/
+
+	//if we have at least one power and we can hit something with it
+
+	if (bHit&&abilities.Num() > 0)
+	{
+	
+		VFXtarget = hit.Location;
+		spawnloc = start;
+		ASC->TryActivateAbilityByClass(abilities[0]);
+		auto a = abilities[0]->GetFName();
+		FString s = a.ToString();
+		GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
+	}
+	
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, "no power found");
 }

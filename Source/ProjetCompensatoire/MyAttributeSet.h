@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
+#include "AbilitySystemComponent.h"
 #include "MyAttributeSet.generated.h"
 
 /**
@@ -23,11 +24,11 @@ class PROJETCOMPENSATOIRE_API UMyAttributeSet : public UAttributeSet
 
 public: 
 
-	UPROPERTY(BlueprintReadWrite , Category = "attributes")
+	UPROPERTY(BlueprintReadOnly , Category = "attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet, Mana);
 
-	UPROPERTY(BlueprintReadWrite, Category = "attributes")
+	UPROPERTY(BlueprintReadOnly, Category = "attributes")
 	FGameplayAttributeData Speed;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet, Speed);
 	
