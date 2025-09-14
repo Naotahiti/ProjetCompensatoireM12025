@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "TP_PickUpComponent.h"
+#include "Engine/Texture2D.h"
 
 UTP_PickUpComponent::UTP_PickUpComponent()
 {
@@ -22,12 +23,15 @@ void UTP_PickUpComponent::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCo
 	AProjetCompensatoireCharacter* Character = Cast<AProjetCompensatoireCharacter>(OtherActor);
 	if(Character != nullptr)
 	{
-		// Notify that the actor is being picked up
-		OnPickUp.Broadcast(Character);
+		
 		Character->receivepower(power);
+		Character->addtoskillbar(image);
+
 		// Unregister from the Overlap Event so it is no longer triggered
 		OnComponentBeginOverlap.RemoveAll(this);
-		this->DestroyComponent();
+		// Notify that the actor is being picked up
+		OnPickUp.Broadcast(Character); // destroy after pick up
+		
 	}
 	
 }

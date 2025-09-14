@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TSubclassOf<UPowerbase> power;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	UTexture2D* image; // sent to HUD skill bar 
+
 
 	UTP_PickUpComponent();
 protected:

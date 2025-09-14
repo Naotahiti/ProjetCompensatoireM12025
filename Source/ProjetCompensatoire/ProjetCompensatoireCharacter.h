@@ -60,6 +60,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ShiftSpellAction;
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void addtoskillbar(UTexture2D* texture); // once a new power is picked up , show it to the skill bar with the appropriate image
+
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void highlightskillborder(int i); // visual cue to signal what skill is equiped
 
 protected:
 	/** Called for movement input */

@@ -92,7 +92,10 @@ void AProjetCompensatoireCharacter::receivepower(TSubclassOf<UGameplayAbility> p
 	ASC->GiveAbility(FGameplayAbilitySpec(power, 1, abilities.Num()-1));
 	CurrentSpell = power;
 	ASC->InitAbilityActorInfo(this, this);
+	highlightskillborder(abilities.Find(CurrentSpell));
 }
+
+
 
 
 void AProjetCompensatoireCharacter::Move(const FInputActionValue& Value)
@@ -165,12 +168,13 @@ void AProjetCompensatoireCharacter::shiftspell() // change de sort à condition d
 	if (abilities.IsEmpty())
 		return;
 	
-		if (abilities.Num() - 1 > abilities.Find(CurrentSpell))
+	if (abilities.Num() -1 > abilities.Find(CurrentSpell))
 		{
 			CurrentSpell = abilities[abilities.Find(CurrentSpell) + 1];
 			auto a = CurrentSpell->GetFName();
 			FString s = a.ToString();
 			GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
+			highlightskillborder(abilities.Find(CurrentSpell));
 		}
 		else
 		{
@@ -178,6 +182,7 @@ void AProjetCompensatoireCharacter::shiftspell() // change de sort à condition d
 			auto a = CurrentSpell->GetFName();
 			FString s = a.ToString();
 			GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
+			highlightskillborder(abilities.Find(CurrentSpell));
 		}
 	
 }
