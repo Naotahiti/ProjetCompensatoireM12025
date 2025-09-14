@@ -75,6 +75,9 @@ void AProjetCompensatoireCharacter::SetupPlayerInputComponent(UInputComponent* P
 
 		//spell casting
 		EnhancedInputComponent->BindAction(SpellAction, ETriggerEvent::Started, this, &AProjetCompensatoireCharacter::CastSpell);
+
+		//change equiped spell
+		EnhancedInputComponent->BindAction(ShiftSpellAction, ETriggerEvent::Started, this, &AProjetCompensatoireCharacter::shiftspell);
 	}
 	else
 	{
@@ -87,6 +90,7 @@ void AProjetCompensatoireCharacter::receivepower(TSubclassOf<UGameplayAbility> p
 	
 	abilities.Add(power);
 	ASC->GiveAbility(FGameplayAbilitySpec(power, 1, abilities.Num()-1));
+	CurrentSpell = power;
 	ASC->InitAbilityActorInfo(this, this);
 }
 
@@ -146,12 +150,34 @@ void AProjetCompensatoireCharacter::CastSpell()
 	
 		VFXtarget = hit.Location;
 		spawnloc = start;
-		ASC->TryActivateAbilityByClass(abilities[0]);
-		auto a = abilities[0]->GetFName();
+		ASC->TryActivateAbilityByClass(CurrentSpell);
+		auto a = CurrentSpell->GetFName();
 		FString s = a.ToString();
 		GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
 	}
 	
 	else
 		GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, "no power found");
+}
+
+void AProjetCompensatoireCharacter::shiftspell() // change de sort à condition d'en avoir au moins 2
+{
+	if (abilities.IsEmpty())
+		return;
+	
+		if (abilities.Num() - 1 > abilities.Find(CurrentSpell))
+		{
+			CurrentSpell = abilities[abilities.Find(CurrentSpell) + 1];
+			auto a = CurrentSpell->GetFName();
+			FString s = a.ToString();
+			GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
+		}
+		else
+		{
+			CurrentSpell = abilities[0];
+			auto a = CurrentSpell->GetFName();
+			FString s = a.ToString();
+			GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
+		}
+	
 }
