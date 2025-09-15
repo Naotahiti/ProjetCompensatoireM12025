@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "AbilitySystemInterface.h"
+#include "GAS/PPowerbase.h"
 #include "ProjetCompensatoireCharacter.generated.h"
 
 class UInputComponent;
@@ -13,7 +14,7 @@ class USkeletalMeshComponent;
 class UCameraComponent;
 class UInputAction;
 class UInputMappingContext;
-
+//class UPowerbase;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -78,6 +79,7 @@ protected:
 
 	void shiftspell();
 
+public:
 	UPROPERTY (EditAnywhere , BlueprintReadOnly , Category = "GASComponent" , meta = (AllowPrivateAccess="true"))
 	class UAbilitySystemComponent* ASC;
 
@@ -86,17 +88,32 @@ protected:
 		return ASC;
 	}
 
+	
 	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category ="GASComponent", meta = (AllowPrivateAccess = "true"))
 	const class UMyAttributeSet* MyAttributeSet;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GASComponent", meta = (AllowPrivateAccess = "true"))
-	TArray<TSubclassOf<class UGameplayAbility>> abilities;
+	TArray<TSubclassOf<UPPowerbase>> abilities;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GASComponent", meta = (AllowPrivateAccess = "true"))
-	TArray<TSubclassOf<class UGameplayEffect>> effects;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "spell casting effects", meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<class UGameplayEffect>> cast_effect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "electricity effects", meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<class UGameplayEffect>> electricity_effects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "fire effects", meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<class UGameplayEffect>> fire_effects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ice effects", meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<class UGameplayEffect>> ice_effects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-	TSubclassOf<class UGameplayAbility> CurrentSpell;
+	TSubclassOf<UPPowerbase> CurrentSpell;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "attributes")
+	float damage;
+
+	TArray<FActiveGameplayEffectHandle> PH; // passive handles
 
 protected:
 	// APawn interface
@@ -109,12 +126,20 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-	void receivepower(TSubclassOf<class UGameplayAbility> power);// add power 
+	void receivepower(TSubclassOf<UPPowerbase> power);// add power 
 
 	FVector VFXtarget; // so that VFX particles go towards a target
 
 	FVector spawnloc; // spawn location for VFX
 
+	UFUNCTION(BlueprintCallable)
+	float GetMana()const;
 
+	UFUNCTION(BlueprintCallable)
+	float GetHealth()const;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void passiveeffects(); // apply effects
+	
 };
 

@@ -25,7 +25,7 @@ public:
 	FOnPickUp OnPickUp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	TSubclassOf<UPowerbase> power;
+	TSubclassOf<UPPowerbase> power;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	UTexture2D* image; // sent to HUD skill bar 

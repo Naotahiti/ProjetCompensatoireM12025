@@ -27,9 +27,32 @@ public:
 	UPROPERTY(BlueprintReadOnly , Category = "attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet, Mana);
+	/*GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UMyAttributeSet, Mana)
+		GAMEPLAYATTRIBUTE_VALUE_GETTER(Mana)
+		GAMEPLAYATTRIBUTE_VALUE_SETTER(Mana)
+		GAMEPLAYATTRIBUTE_VALUE_INITTER(Mana)*/
+
+	UPROPERTY(BlueprintReadOnly, Category = "attributes")
+	FGameplayAttributeData Health;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet, Health);
 
 	UPROPERTY(BlueprintReadOnly, Category = "attributes")
 	FGameplayAttributeData Speed;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet, Speed);
+
+	UPROPERTY(BlueprintReadOnly, Category = "attributes")
+	FGameplayAttributeData baseSpeed;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet, baseSpeed);
+
+	UPROPERTY(BlueprintReadOnly, Category = "attributes")
+	FGameplayAttributeData DamageReceived;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet, DamageReceived);
+
+	/*GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UMyAttributeSet, Mana);
+	float GetMana() const;
+	void SetMana(float NewVal);
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(Mana);*/
+
+	void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 	
 };

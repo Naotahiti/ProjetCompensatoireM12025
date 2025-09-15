@@ -13,6 +13,9 @@
 #include "AbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "MyAttributeSet.h" 
+#include "GAS/PPowerbase.h"
+#include "GAS/Interactible.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -54,6 +57,7 @@ void AProjetCompensatoireCharacter::BeginPlay()
 		MyAttributeSet = ASC->GetSet<UMyAttributeSet>();
 		
 	}
+	
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -85,7 +89,7 @@ void AProjetCompensatoireCharacter::SetupPlayerInputComponent(UInputComponent* P
 	}
 }
 
-void AProjetCompensatoireCharacter::receivepower(TSubclassOf<UGameplayAbility> power)
+void AProjetCompensatoireCharacter::receivepower(TSubclassOf<UPPowerbase> power) // stocke le nouveau pouvoir obtenu
 {
 	
 	abilities.Add(power);
@@ -93,8 +97,44 @@ void AProjetCompensatoireCharacter::receivepower(TSubclassOf<UGameplayAbility> p
 	CurrentSpell = power;
 	ASC->InitAbilityActorInfo(this, this);
 	highlightskillborder(abilities.Find(CurrentSpell));
+
+	// Appliquer l’effet passif
+	UPPowerbase* DefaultPower = Cast<UPPowerbase>(power->GetDefaultObject());
+	if (DefaultPower && DefaultPower->PassiveEffect)
+	{
+		FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DefaultPower->PassiveEffect, 1.f, Context);
+
+		if (SpecHandle.IsValid())
+		{
+			DefaultPower->PassiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+		}
+	}
+
+	
+	
+	
 }
 
+
+float AProjetCompensatoireCharacter::GetMana() const
+{
+
+	if (MyAttributeSet)
+	{
+		return MyAttributeSet->GetMana();
+	}
+	return 0.0f;
+}
+
+float AProjetCompensatoireCharacter::GetHealth()const
+{
+	if (MyAttributeSet)
+	{
+		return MyAttributeSet->GetHealth();
+	}
+	return 0.f;
+}
 
 
 
@@ -147,16 +187,42 @@ void AProjetCompensatoireCharacter::CastSpell()
 	DrawDebugPoint(GetWorld(), hit.Location, 10.f, FColor::Blue, false, 2.f);*/
 
 	//if we have at least one power and we can hit something with it
+	AInteractible* actorhit = Cast<AInteractible>(hit.GetActor());
+	
+	if (actorhit)
+	{
+		TSubclassOf<UPPowerbase> hitactorpower = actorhit->weakness;
+
+	}
 
 	if (bHit&&abilities.Num() > 0)
 	{
 	
+
 		VFXtarget = hit.Location;
 		spawnloc = start;
 		ASC->TryActivateAbilityByClass(CurrentSpell);
+		//debug
 		auto a = CurrentSpell->GetFName();
 		FString s = a.ToString();
 		GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
+		if (cast_effect.Num()>0) // si on a moins un effet assigné au lancer de sort
+		{
+			for(TSubclassOf<UGameplayEffect> e : cast_effect)
+			{
+				FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+				ContextHandle.AddSourceObject(this);
+
+				FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(e, 1.f, ContextHandle);
+
+				if (SpecHandle.IsValid())
+				{
+					ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+				}
+			}
+		}
+
+		
 	}
 	
 	else
@@ -168,13 +234,24 @@ void AProjetCompensatoireCharacter::shiftspell() // change de sort à condition d
 	if (abilities.IsEmpty())
 		return;
 	
-	if (abilities.Num() -1 > abilities.Find(CurrentSpell))
+	if (abilities.Num() -1 > abilities.Find(CurrentSpell)) // if we have at least 2 spells
 		{
+
+		
+
 			CurrentSpell = abilities[abilities.Find(CurrentSpell) + 1];
 			auto a = CurrentSpell->GetFName();
 			FString s = a.ToString();
 			GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
-			highlightskillborder(abilities.Find(CurrentSpell));
+			highlightskillborder(abilities.Find(CurrentSpell)); // indique sur le HUD quel pouvoir est équipé
+			
+
+			
+
+			
+
+
+
 		}
 		else
 		{
@@ -182,7 +259,7 @@ void AProjetCompensatoireCharacter::shiftspell() // change de sort à condition d
 			auto a = CurrentSpell->GetFName();
 			FString s = a.ToString();
 			GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
-			highlightskillborder(abilities.Find(CurrentSpell));
+			highlightskillborder(abilities.Find(CurrentSpell));  // indique sur le HUD quel pouvoir est équipé
 		}
-	
+	passiveeffects(); // cheat parce que j'arrive pas en c++
 }

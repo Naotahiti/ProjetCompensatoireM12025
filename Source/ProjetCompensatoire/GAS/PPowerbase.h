@@ -6,21 +6,18 @@
 #include "Abilities/GameplayAbility.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
-#include "Powerbase.generated.h"
+#include "PPowerbase.generated.h"
 
 /**
  * 
  */
-
-
 UCLASS()
-class PROJETCOMPENSATOIRE_API UPowerbase : public UGameplayAbility
+class PROJETCOMPENSATOIRE_API UPPowerbase : public UGameplayAbility
 {
 	GENERATED_BODY()
 
-public:
 
-  
+public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
     FName AbilityName;
@@ -30,29 +27,29 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
     float Cooldown;
-  
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
     FString ElementType;
 
-   /* UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
-    FGameplayTag CooldownTag;*/
+    /* UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
+     FGameplayTag CooldownTag;*/
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
     UNiagaraSystem* niagara;
 
-  
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Passive")
     TSubclassOf<class UGameplayEffect> PassiveEffect;
 
-    FActiveGameplayEffectHandle PassiveEffectHandle; // stock effect passive
+    FActiveGameplayEffectHandle PassiveEffectHandle; // stock effect passive handle
 
 
 
 
 protected:
-   
-    virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle,const FGameplayAbilityActorInfo* ActorInfo,const FGameplayTagContainer* SourceTags,
-    const FGameplayTagContainer* TargetTags,FGameplayTagContainer* OptionalRelevantTags ) const override;
+
+    virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags,
+        const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
 
     virtual void ActivateAbility(
         const FGameplayAbilitySpecHandle Handle,
@@ -61,7 +58,7 @@ protected:
         const FGameplayEventData* TriggerEventData
     ) override;
 
-   
+
     virtual void EndAbility(
         const FGameplayAbilitySpecHandle Handle,
         const FGameplayAbilityActorInfo* ActorInfo,
