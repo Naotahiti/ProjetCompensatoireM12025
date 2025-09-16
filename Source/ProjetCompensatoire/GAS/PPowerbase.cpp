@@ -8,18 +8,18 @@
 #include "NiagaraComponent.h"
 #include "../MyAttributeSet.h"
 
-bool UPPowerbase::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
-{
-    //  if(ManaCost<1)
-    AProjetCompensatoireCharacter* Player = Cast<AProjetCompensatoireCharacter>(ActorInfo->AvatarActor.Get());
-    if (!Player) return false;
-    UAbilitySystemComponent* asc = Player->GetAbilitySystemComponent();
-    float CurrentMana = asc->GetNumericAttribute(UMyAttributeSet::GetManaAttribute());
-    if (ManaCost < CurrentMana)
-        return true;
-    else
-        return false;
-}
+//bool UPPowerbase::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+//{
+//    //  if(ManaCost<1)
+//    AProjetCompensatoireCharacter* Player = Cast<AProjetCompensatoireCharacter>(ActorInfo->AvatarActor.Get());
+//    if (!Player) return false;
+//    UAbilitySystemComponent* asc = Player->GetAbilitySystemComponent();
+//    float timeelapsed = asc->GetNumericAttribute(UMyAttributeSet::GetManaAttribute());
+//    if (Cooldown < timeelapsed)
+//        return true;
+//    else
+//        return false;
+//}
 
 void UPPowerbase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -39,6 +39,7 @@ void UPPowerbase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
         }
 
     }
+    CommitAbilityCooldown(Handle,ActorInfo,ActivationInfo,true);
     EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 
 }
@@ -48,10 +49,10 @@ void UPPowerbase::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGam
     Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
-void UPPowerbase::ApplyCost(const FGameplayAbilityActorInfo* ActorInfo)
-{
-}
-
-void UPPowerbase::ApplyCooldown(const FGameplayAbilityActorInfo* ActorInfo)
-{
-}
+//void UPPowerbase::ApplyCost(const FGameplayAbilityActorInfo* ActorInfo)
+//{
+//}
+//
+//void UPPowerbase::ApplyCooldown(const FGameplayAbilityActorInfo* ActorInfo)
+//{
+//}

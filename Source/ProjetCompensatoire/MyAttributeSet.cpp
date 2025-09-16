@@ -22,8 +22,8 @@ void UMyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModC
 
     if (Data.EvaluatedData.Attribute == GetManaAttribute())
     {
-       
-        SetMana(FMath::Max(GetMana(), 0.0f));
+        float newmana = FMath::Clamp(GetMana(), 0, Getmaxmana());
+        SetMana(newmana);
     }
 
     if (Data.EvaluatedData.Attribute == GetSpeedAttribute())

@@ -208,7 +208,9 @@ void AProjetCompensatoireCharacter::CastSpell()
 		auto a = CurrentSpell->GetFName();
 		FString s = a.ToString();
 		GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
-		if (cast_effect.Num()>0) // si on a moins un effet assigné au lancer de sort
+
+
+	/*	if (cast_effect.Num()>0) 
 		{
 			for(TSubclassOf<UGameplayEffect> e : cast_effect)
 			{
@@ -222,7 +224,7 @@ void AProjetCompensatoireCharacter::CastSpell()
 					ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 				}
 			}
-		}
+		}*/
 
 		
 	}

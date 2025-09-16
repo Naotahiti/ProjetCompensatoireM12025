@@ -37,6 +37,10 @@ public:
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet, Health);
 
 	UPROPERTY(BlueprintReadOnly, Category = "attributes")
+	FGameplayAttributeData maxmana;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet, maxmana);
+
+	UPROPERTY(BlueprintReadOnly, Category = "attributes")
 	FGameplayAttributeData Speed;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet, Speed);
 

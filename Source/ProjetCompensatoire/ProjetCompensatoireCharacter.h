@@ -68,6 +68,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void highlightskillborder(int i); // visual cue to signal what skill is equiped
 
+	//UFUNCTION()
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);

@@ -43,13 +43,14 @@ public:
 
     FActiveGameplayEffectHandle PassiveEffectHandle; // stock effect passive handle
 
-
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Passive")
+    TSubclassOf<class UGameplayEffect> CastEffect; //cooldown
 
 
 protected:
 
-    virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags,
-        const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
+   /* virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags,
+        const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;*/
 
     virtual void ActivateAbility(
         const FGameplayAbilitySpecHandle Handle,
@@ -67,10 +68,10 @@ protected:
         bool bWasCancelled
     ) override;
 
-    /** Application du coût */
-    virtual void ApplyCost(const FGameplayAbilityActorInfo* ActorInfo);
+    ///** Application du coût */
+    //virtual void ApplyCost(const FGameplayAbilityActorInfo* ActorInfo);
 
-    /** Application du cooldown */
-    virtual void ApplyCooldown(const FGameplayAbilityActorInfo* ActorInfo);
+    ///** Application du cooldown */
+    //virtual void ApplyCooldown(const FGameplayAbilityActorInfo* ActorInfo);
 	
 };
