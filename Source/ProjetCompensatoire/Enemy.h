@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "Abilities/GameplayAbility.h"
 #include "Enemy.generated.h"
 
 UCLASS()
-class PROJETCOMPENSATOIRE_API AEnemy : public ACharacter
+class PROJETCOMPENSATOIRE_API AEnemy : public ACharacter , public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -26,5 +27,15 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComp; }
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
+	UAbilitySystemComponent* AbilitySystemComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
+	class UMyAttributeSet* AttributeSet;
+
 
 };

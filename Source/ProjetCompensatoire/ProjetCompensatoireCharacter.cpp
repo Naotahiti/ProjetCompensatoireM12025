@@ -192,6 +192,8 @@ void AProjetCompensatoireCharacter::CastSpell()
 	if (actorhit)
 	{
 		TSubclassOf<UPPowerbase> hitactorpower = actorhit->weakness;
+		if (hitactorpower == CurrentSpell)
+			actorhit->Destroy();
 
 	}
 
