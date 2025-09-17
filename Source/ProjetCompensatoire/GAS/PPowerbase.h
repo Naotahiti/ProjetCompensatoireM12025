@@ -46,6 +46,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Passive")
     TSubclassOf<class UGameplayEffect> CastEffect; //cooldown
 
+    void movement();
 
 protected:
 

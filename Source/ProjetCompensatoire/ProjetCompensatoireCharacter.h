@@ -140,8 +140,34 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetHealth()const;
 
+	UFUNCTION(BlueprintCallable)
+	float GetDamage()const;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void passiveeffects(); // apply effects
+
+	TArray<FGameplayEffectContextHandle> Contexts;
+	TArray<FGameplayEffectSpecHandle> SpecHandles;
+	TArray<FActiveGameplayEffectHandle> AGEH;
+
+	TArray<TSubclassOf<class UGameplayEffect>> GE;
+
+	// Stocke les effets passifs actifs
+	TMap<TSubclassOf<UGameplayAbility>, FActiveGameplayEffectHandle> ActivePassiveEffects;
+
+
+	void ActivatePassiveEffects(TSubclassOf<UGameplayAbility> AbilityClass, TSubclassOf<UGameplayEffect> PassiveEffect);
+
+	void DeactivatePassiveEffects(TSubclassOf<UGameplayAbility> AbilityClass);
+
+	//UFUNCTION()
+	//virtual float TakeDamage
+	//(
+	//	float DamageAmount,
+	//	struct FDamageEvent const& DamageEvent,
+	//	class AController* EventInstigator,
+	//	AActor* DamageCauser
+	//);
 	
 };
 

@@ -21,6 +21,13 @@
 //        return false;
 //}
 
+void UPPowerbase::movement()
+{
+  /*  AProjetCompensatoireCharacter* Player = Cast<AProjetCompensatoireCharacter>(GetAvatarActorFromActorInfo());
+    if(Player)
+        Player */
+}
+
 void UPPowerbase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
     AProjetCompensatoireCharacter* Player = Cast<AProjetCompensatoireCharacter>(GetAvatarActorFromActorInfo());
@@ -39,6 +46,8 @@ void UPPowerbase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
         }
 
     }
+    else
+        movement();
     CommitAbilityCooldown(Handle,ActorInfo,ActivationInfo,true);
     EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 

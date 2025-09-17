@@ -102,19 +102,41 @@ void AProjetCompensatoireCharacter::receivepower(TSubclassOf<UPPowerbase> power)
 	UPPowerbase* DefaultPower = Cast<UPPowerbase>(power->GetDefaultObject());
 	if (DefaultPower && DefaultPower->PassiveEffect)
 	{
-		FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+		/*FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
 		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DefaultPower->PassiveEffect, 1.f, Context);
+		Contexts.Add(Context);
+		SpecHandles.Add(SpecHandle);
+		GE.Add(DefaultPower->PassiveEffect);
 
 		if (SpecHandle.IsValid())
 		{
 			DefaultPower->PassiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+			AGEH.Add(DefaultPower->PassiveEffectHandle);
+		}*/
+
+		if (ASC && DefaultPower->PassiveEffect)
+		{
+			GE.Add(DefaultPower->PassiveEffect);
+			FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+			FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DefaultPower->PassiveEffect, 1, Context);
+
+			if (SpecHandle.IsValid())
+			{
+				FActiveGameplayEffectHandle GEHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+				ActivePassiveEffects.Add(power, GEHandle);
+				// Sauvegarde le handle pour pouvoir retirer l’effet plus tard
+
+			}
 		}
+		
+		//ActivatePassiveEffects(power, DefaultPower->PassiveEffect);
 	}
 
 	
 	
 	
 }
+
 
 
 float AProjetCompensatoireCharacter::GetMana() const
@@ -134,6 +156,44 @@ float AProjetCompensatoireCharacter::GetHealth()const
 		return MyAttributeSet->GetHealth();
 	}
 	return 0.f;
+}
+
+float AProjetCompensatoireCharacter::GetDamage() const
+{
+
+	if (MyAttributeSet)
+	{
+		return MyAttributeSet->GetDamageReceived();
+	}
+	return 0.0f;
+}
+
+void AProjetCompensatoireCharacter::ActivatePassiveEffects(TSubclassOf<UGameplayAbility> AbilityClass, TSubclassOf<UGameplayEffect> PassiveEffect)
+{
+	if (ASC && PassiveEffect)
+	{
+		FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(PassiveEffect, 1, Context);
+
+		if (SpecHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle GEHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+			// Sauvegarde le handle pour pouvoir retirer l’effet plus tard
+			
+		}
+	}
+}
+
+void AProjetCompensatoireCharacter::DeactivatePassiveEffects(TSubclassOf<UGameplayAbility> AbilityClass)
+{
+	if (ASC && ActivePassiveEffects.Contains(AbilityClass))
+	{
+		FActiveGameplayEffectHandle Handle = ActivePassiveEffects[AbilityClass];
+		ASC->RemoveActiveGameplayEffect(Handle);
+
+		ActivePassiveEffects.Remove(AbilityClass);
+	}
 }
 
 
@@ -210,7 +270,7 @@ void AProjetCompensatoireCharacter::CastSpell()
 		GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
 
 
-	/*	if (cast_effect.Num()>0) 
+		if (cast_effect.Num()>0) 
 		{
 			for(TSubclassOf<UGameplayEffect> e : cast_effect)
 			{
@@ -224,7 +284,7 @@ void AProjetCompensatoireCharacter::CastSpell()
 					ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 				}
 			}
-		}*/
+		}
 
 		
 	}
@@ -241,25 +301,22 @@ void AProjetCompensatoireCharacter::shiftspell() // change de sort à condition d
 	if (abilities.Num() -1 > abilities.Find(CurrentSpell)) // if we have at least 2 spells
 		{
 
-		
-
+		DeactivatePassiveEffects(CurrentSpell);
 			CurrentSpell = abilities[abilities.Find(CurrentSpell) + 1];
+			ActivatePassiveEffects(CurrentSpell, GE[abilities.Find(CurrentSpell)]);
 			auto a = CurrentSpell->GetFName();
 			FString s = a.ToString();
 			GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
 			highlightskillborder(abilities.Find(CurrentSpell)); // indique sur le HUD quel pouvoir est équipé
-			
-
-			
-
-			
 
 
-
+	
 		}
 		else
 		{
+		DeactivatePassiveEffects(CurrentSpell);
 			CurrentSpell = abilities[0];
+			//ActivatePassiveEffects(CurrentSpell, GE[abilities.Find(CurrentSpell)]);
 			auto a = CurrentSpell->GetFName();
 			FString s = a.ToString();
 			GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
@@ -267,3 +324,5 @@ void AProjetCompensatoireCharacter::shiftspell() // change de sort à condition d
 		}
 	passiveeffects(); // cheat parce que j'arrive pas en c++
 }
+
+

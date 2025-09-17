@@ -28,11 +28,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComp; }
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return ASC; }
 
-protected:
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
-	UAbilitySystemComponent* AbilitySystemComp;
+	class UAbilitySystemComponent* ASC;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
 	class UMyAttributeSet* AttributeSet;
