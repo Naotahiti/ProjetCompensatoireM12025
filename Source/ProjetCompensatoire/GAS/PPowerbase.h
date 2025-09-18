@@ -20,7 +20,7 @@ class PROJETCOMPENSATOIRE_API UPPowerbase : public UGameplayAbility
 public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
-    FName AbilityName;
+    FGameplayTag tagname;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
     float ManaCost;
@@ -47,6 +47,8 @@ public:
     TSubclassOf<class UGameplayEffect> CastEffect; //cooldown
 
     void movement();
+
+    
 
 protected:
 

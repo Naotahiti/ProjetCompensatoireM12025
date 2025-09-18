@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "AbilitySystemInterface.h"
 #include "GAS/PPowerbase.h"
+#include "GameplayTagContainer.h"
 #include "ProjetCompensatoireCharacter.generated.h"
 
 class UInputComponent;
@@ -68,6 +69,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void highlightskillborder(int i); // visual cue to signal what skill is equiped
 
+	FGameplayTagContainer* GTC;
+
+	TArray<FGameplayTag*> gptags;
+
 	//UFUNCTION()
 
 protected:
@@ -80,6 +85,8 @@ protected:
 	void CastSpell();
 
 	void shiftspell();
+
+	void ReceiveTagOnAbilityEquipped(FGameplayTag* t); // to have a better control over passive effects if it truly works
 
 public:
 	UPROPERTY (EditAnywhere , BlueprintReadOnly , Category = "GASComponent" , meta = (AllowPrivateAccess="true"))
@@ -143,8 +150,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetDamage()const;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void passiveeffects(); // apply effects
+	
 
 	TArray<FGameplayEffectContextHandle> Contexts;
 	TArray<FGameplayEffectSpecHandle> SpecHandles;
@@ -153,12 +159,12 @@ public:
 	TArray<TSubclassOf<class UGameplayEffect>> GE;
 
 	// Stocke les effets passifs actifs
-	TMap<TSubclassOf<UGameplayAbility>, FActiveGameplayEffectHandle> ActivePassiveEffects;
+	TMap<TSubclassOf<UPPowerbase>, FActiveGameplayEffectHandle> ActivePassiveEffects;
 
 
-	void ActivatePassiveEffects(TSubclassOf<UGameplayAbility> AbilityClass, TSubclassOf<UGameplayEffect> PassiveEffect);
+	void ActivatePassiveEffects(TSubclassOf<UPPowerbase> AbilityClass, TSubclassOf<UGameplayEffect> PassiveEffect);
 
-	void DeactivatePassiveEffects(TSubclassOf<UGameplayAbility> AbilityClass);
+	void DeactivatePassiveEffects(TSubclassOf<UPPowerbase> AbilityClass);
 
 	//UFUNCTION()
 	//virtual float TakeDamage

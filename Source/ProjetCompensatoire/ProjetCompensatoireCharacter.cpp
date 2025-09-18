@@ -15,6 +15,7 @@
 #include "MyAttributeSet.h" 
 #include "GAS/PPowerbase.h"
 #include "GAS/Interactible.h"
+#include "Enemy.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -102,11 +103,12 @@ void AProjetCompensatoireCharacter::receivepower(TSubclassOf<UPPowerbase> power)
 	UPPowerbase* DefaultPower = Cast<UPPowerbase>(power->GetDefaultObject());
 	if (DefaultPower && DefaultPower->PassiveEffect)
 	{
+		
 		/*FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
 		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DefaultPower->PassiveEffect, 1.f, Context);
 		Contexts.Add(Context);
 		SpecHandles.Add(SpecHandle);
-		GE.Add(DefaultPower->PassiveEffect);
+		
 
 		if (SpecHandle.IsValid())
 		{
@@ -127,14 +129,14 @@ void AProjetCompensatoireCharacter::receivepower(TSubclassOf<UPPowerbase> power)
 				// Sauvegarde le handle pour pouvoir retirer l’effet plus tard
 
 			}
+			if (abilities.Num() > 1)
+			{
+				DeactivatePassiveEffects(abilities[abilities.Find(CurrentSpell)-1]);
+				//CurrentSpell = abilities[abilities.Find(CurrentSpell) + 1];
+			}
 		}
-		
-		//ActivatePassiveEffects(power, DefaultPower->PassiveEffect);
-	}
 
-	
-	
-	
+	}
 }
 
 
@@ -168,31 +170,31 @@ float AProjetCompensatoireCharacter::GetDamage() const
 	return 0.0f;
 }
 
-void AProjetCompensatoireCharacter::ActivatePassiveEffects(TSubclassOf<UGameplayAbility> AbilityClass, TSubclassOf<UGameplayEffect> PassiveEffect)
+void AProjetCompensatoireCharacter::ActivatePassiveEffects(TSubclassOf<UPPowerbase> AbilityClass, TSubclassOf<UGameplayEffect> PassiveEffect)
 {
 	if (ASC && PassiveEffect)
 	{
-		FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
-		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(PassiveEffect, 1, Context);
+		FGameplayEffectContextHandle Contexta = ASC->MakeEffectContext();
+		FGameplayEffectSpecHandle SpecHandlea = ASC->MakeOutgoingSpec(PassiveEffect, 1, Contexta);
 
-		if (SpecHandle.IsValid())
+		if (SpecHandlea.IsValid())
 		{
-			FActiveGameplayEffectHandle GEHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
-
+			FActiveGameplayEffectHandle GEHandlea = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandlea.Data.Get());
+			//ActivePassiveEffects.Add(AbilityClass, GEHandlea);
 			// Sauvegarde le handle pour pouvoir retirer l’effet plus tard
 			
 		}
 	}
 }
 
-void AProjetCompensatoireCharacter::DeactivatePassiveEffects(TSubclassOf<UGameplayAbility> AbilityClass)
+void AProjetCompensatoireCharacter::DeactivatePassiveEffects(TSubclassOf<UPPowerbase> AbilityClass)
 {
 	if (ASC && ActivePassiveEffects.Contains(AbilityClass))
 	{
-		FActiveGameplayEffectHandle Handle = ActivePassiveEffects[AbilityClass];
-		ASC->RemoveActiveGameplayEffect(Handle);
+		FActiveGameplayEffectHandle Handled = ActivePassiveEffects[AbilityClass];
+		ASC->RemoveActiveGameplayEffect(Handled);
 
-		ActivePassiveEffects.Remove(AbilityClass);
+		//ActivePassiveEffects.Remove(AbilityClass);
 	}
 }
 
@@ -264,6 +266,7 @@ void AProjetCompensatoireCharacter::CastSpell()
 		VFXtarget = hit.Location;
 		spawnloc = start;
 		ASC->TryActivateAbilityByClass(CurrentSpell);
+		
 		//debug
 		auto a = CurrentSpell->GetFName();
 		FString s = a.ToString();
@@ -295,13 +298,13 @@ void AProjetCompensatoireCharacter::CastSpell()
 
 void AProjetCompensatoireCharacter::shiftspell() // change de sort à condition d'en avoir au moins 2
 {
-	if (abilities.IsEmpty())
+	if (abilities.Num()<2) 
 		return;
 	
-	if (abilities.Num() -1 > abilities.Find(CurrentSpell)) // if we have at least 2 spells
+		if (abilities.Num() - 1 > abilities.Find(CurrentSpell)) // si pas au bout de la skill bar
 		{
 
-		DeactivatePassiveEffects(CurrentSpell);
+			DeactivatePassiveEffects(CurrentSpell);
 			CurrentSpell = abilities[abilities.Find(CurrentSpell) + 1];
 			ActivatePassiveEffects(CurrentSpell, GE[abilities.Find(CurrentSpell)]);
 			auto a = CurrentSpell->GetFName();
@@ -310,19 +313,25 @@ void AProjetCompensatoireCharacter::shiftspell() // change de sort à condition d
 			highlightskillborder(abilities.Find(CurrentSpell)); // indique sur le HUD quel pouvoir est équipé
 
 
-	
+
 		}
-		else
+		else if (abilities.Num() - 1 == abilities.Find(CurrentSpell))// sinon revient au début de la skill bar
 		{
-		DeactivatePassiveEffects(CurrentSpell);
+			DeactivatePassiveEffects(CurrentSpell);
 			CurrentSpell = abilities[0];
-			//ActivatePassiveEffects(CurrentSpell, GE[abilities.Find(CurrentSpell)]);
+			ActivatePassiveEffects(CurrentSpell, GE[abilities.Find(CurrentSpell)]);
 			auto a = CurrentSpell->GetFName();
 			FString s = a.ToString();
 			GEngine->AddOnScreenDebugMessage(-1, 5., FColor::Cyan, s);
 			highlightskillborder(abilities.Find(CurrentSpell));  // indique sur le HUD quel pouvoir est équipé
 		}
-	passiveeffects(); // cheat parce que j'arrive pas en c++
+
+	//passiveeffects(); // cheat parce que j'arrive pas en c++
+}
+
+void AProjetCompensatoireCharacter::ReceiveTagOnAbilityEquipped(FGameplayTag* t)
+{
+	
 }
 
 
