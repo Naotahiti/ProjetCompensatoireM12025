@@ -12,10 +12,18 @@ void UMyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModC
     Super::PostGameplayEffectExecute(Data);
 
 
+
+
     if (AActor* OwningActor = GetOwningActor())
     {
-        if (AProjetCompensatoireCharacter* Character = Cast<AProjetCompensatoireCharacter>(OwningActor))
-        {
+
+        // Le caster en Character
+        ACharacter* Character = Cast<AProjetCompensatoireCharacter>(OwningActor);
+        if (!Character) return;
+
+        // Récupérer le CharacterMovementComponent
+        UCharacterMovementComponent* MoveComp = Character->GetCharacterMovement();
+       
     // Check to see if this call affects our Health by using the Property Getter.
     if (Data.EvaluatedData.Attribute == GetHealthAttribute())
     {
@@ -31,33 +39,16 @@ void UMyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModC
         SetMana(newmana);
     }
 
-    if (Data.EvaluatedData.Attribute == GetSpeedAttribute())
-    {
-       
-        SetSpeed(FMath::Max(GetSpeed(), 0.0f));
+ 
 
-       
-                if (Character->GetCharacterMovement())
-                {
-                    Character->GetCharacterMovement()->MaxWalkSpeed = GetSpeed();
-                }
-        
-
-
-    }
-
-    if (Data.EvaluatedData.Attribute == GetDamageReceivedAttribute())
-          {
-        Character->damage = GetDamageReceived();
-           }
+   
 
    
 
     if (Data.EvaluatedData.Attribute == GetbaseSpeedAttribute())
           {
-
-        SetSpeed(FMath::Max(GetbaseSpeed(), 0.0f));
-
+  
+        SetbaseSpeed(FMath::Clamp(GetbaseSpeed(), 0, GetMaxSpeed()));
        
                 if (Character->GetCharacterMovement())
                 {
@@ -67,7 +58,7 @@ void UMyAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModC
         }
 
 
-    }
+    
 
 
 }

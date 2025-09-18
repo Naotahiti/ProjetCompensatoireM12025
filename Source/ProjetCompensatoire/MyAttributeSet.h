@@ -45,8 +45,8 @@ public:
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet, maxmana);
 
 	UPROPERTY(BlueprintReadOnly, Category = "attributes")
-	FGameplayAttributeData Speed;
-	ATTRIBUTE_ACCESSORS(UMyAttributeSet, Speed);
+	FGameplayAttributeData MaxSpeed;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet, MaxSpeed);
 
 	UPROPERTY(BlueprintReadOnly, Category = "attributes")
 	FGameplayAttributeData baseSpeed;
